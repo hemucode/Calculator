@@ -22,8 +22,8 @@ config['welcome'] = {
     'default': {
         'context': 'win',
         'size': {
-            "width": 350, 
-            "height": 500
+            "width": 290, 
+            "height": 510
         }
     }
 };
