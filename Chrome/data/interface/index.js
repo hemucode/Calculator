@@ -1,144 +1,181 @@
-class Calculator {
-	
-	constructor() {
-		this.current = 0;
-		this.entered = 0;
-		this.answer = 0;
-
-		this.decimal = false;
-
-		this.operator = '';
-
-		this.states = {
-			'inv': false,
-			'comma': false
-		}
-
-		this.options = [
-			['equals', this.processEquals.bind(this)],
-			['clear', this.processClear.bind(this)],
-			['sqrt', this.processSqrt.bind(this)],
-			['inv', this.processInv.bind(this)],
-			['comma', this.processComma.bind(this)],
-			['pi', this.processPi.bind(this)]
-		];
-
-		this.firstEnteredOutput = document.querySelector('.f_entered');
-		this.lastEnteredOutput = document.querySelector('.l_entered');
-		this.operatorOutput = document.querySelector('.operator');
-
-		this.currentOutput = document.querySelector('.current > h1');
-		this.buttons = document.querySelectorAll('.buttons > div');
-
-		for(var i = 0, n = this.buttons.length; i < n; i++) {
-			var calc = this;
-			var button = this.buttons[i];
-
-			button.addEventListener('mousedown', function() {
-				var _this = this;
-				calc.processAction(_this.getAttribute('data-key'));
-				_this.classList.add('pressed');
-				setTimeout(function() {
-					_this.classList.remove('pressed');
-				}, 400);
-			});
-
-			button.addEventListener('mouseup', function() {
-				var _this = this;
-				_this.classList.remove('pressed');
-			});
-		}
+setInterval(()=>{
+	x = document.querySelector("#current")
+	if (x.innerText.length>10 ) {
+		cal = (x.innerText.length - 10) * 2;
+		size = 50 - cal;
+		x.style.fontSize = size+"px";
 	}
+},300)
 
-	processAction(a) {
-		for(var i = 0, n = this.options.length; i < n; i++) {
-			var option = this.options[i];
-			if(a === option[0]) {
-				option[1]();
-				return;
-			}
-		}
-
-		if(a === '+' || a === '-' || a === '/' || a === '*') {
-			this.processASDM(a);
-			return;
-		} else {
-			this.processNumber(a);
-			return;
-		}
-
-	}
-
-	processEquals() {
-		if(!!this.operator) {
-			this.displayNumber(this.current, this.lastEnteredOutput);
-			this.answer = eval(this.entered + this.operator + this.current);
-			this.displayNumber(this.answer, this.currentOutput);
-
-			this.current = this.answer;
-		}
-	}
-
-	processClear() {
-		this.current = 0;
-		this.displayNumber(this.current, this.currentOutput);
-		this.entered = 0;
-		this.operator = '';
-		this.firstEnteredOutput.innerHTML = '';
-		this.lastEnteredOutput.innerHTML = '';
-		this.operatorOutput.innerHTML = '';
-	}
-
-	processSqrt() {
-		this.current = Math.sqrt(this.current);
-		this.displayNumber(this.current, this.currentOutput);
-	}
-
-	processInv() {
-		this.current = this.current * -1;
-		this.displayNumber(this.current, this.currentOutput);
-	}
-
-	processComma() {
-		if(!this.decimal) {
-			this.current += '.';
-			this.currentOutput.innerHTML = this.current;
-		}
-
-		this.decimal = true;
-	}
-
-	processPi() {
-		this.current = Math.PI;
-		this.displayNumber(this.current, this.currentOutput);
-	}
-
-	processASDM(a) {
-		if(!!this.entered && !!!this.answer) {
-			return;
-		}
-
-		if(this.answer) {
-			this.lastEnteredOutput.innerHTML = '';
-		}
-
-		this.decimal = false;
-		this.operator = a;
-		this.entered = this.current;
-		this.displayNumber(this.entered, this.firstEnteredOutput);
-		a === '*' ? this.operatorOutput.innerHTML = 'x' : this.operatorOutput.innerHTML = this.operator;
-		this.current = 0;
-		this.displayNumber(this.current, this.currentOutput);
-	}
-
-	processNumber(n) {
-		this.current === 0 ? this.current = n : this.current += n;
-		this.displayNumber(this.current, this.currentOutput);
-	}
-
-	displayNumber(n, location) {
-		location.innerHTML = String(n).substring(0, 10);
-	}
+function middleSection() {
+  var windowHeight = window.innerHeight;
+  var section = document.getElementById('calculater');
+  var sectionHeight = section.offsetHeight;
+  section.style.marginTop = windowHeight / 2 - sectionHeight / 2 + "px";
 }
 
-var Calc = new Calculator();
+window.onresize = function (e) {
+  middleSection();
+};
+
+middleSection();
+
+// get variebles for each button/input
+var prev = "",
+current = "",
+domath = "",
+lastNum = "",
+resetCurrent = false,
+resetPrev = false,
+lastNumberMode = true,
+resetDomath = true,
+decimal = false,
+cEL = document.getElementById('btn-c'),
+ceEL = document.getElementById('btn-ce'),
+prevEl = document.getElementById('last-action'),
+currentEl = document.getElementById('current'),
+numbersSelector = document.querySelectorAll('.numbers'),
+divide = document.getElementById('btn-d'),
+multiple = document.getElementById('btn-t'),
+plus = document.getElementById('btn-p'),
+minus = document.getElementById('btn-m'),
+equal = document.getElementById('btn-e'),
+opArr = [divide, multiple, plus, minus, equal];
+
+// functions to update the display
+function lastNumber(element) {
+  if (lastNumberMode === true) {
+    lastNum += element;
+  }
+}
+
+function addToPrev(element) {
+  if (prevEl.style.display === "none" && resetPrev === false) {
+    prev = lastNum + element;
+    prevEl.style.display = "block";
+    currentEl.style.marginTop = "2rem";
+  } else if (prevEl.style.display === "none" && resetPrev === true) {
+    lastNum = "";
+    prev = element;
+    prevEl.style.display = "block";
+    currentEl.style.marginTop = "2rem";
+  } else {
+    prev += element;
+  }
+  prevEl.innerHTML = prev;
+}
+
+function showCurrent(element) {
+  if (currentEl.innerHTML === "0" || resetCurrent === true) {
+    current = element;
+    currentEl.innerHTML = current;
+    resetCurrent = false;
+  } else {
+    current += element;
+    currentEl.innerHTML = current;
+  }
+}
+
+function clearPrev() {
+  prev = "";
+  prevEl.style.display = "none";
+  currentEl.style.marginTop = "3rem";
+}
+
+function clearCurrent() {
+  current = "0";
+  currentEl.innerHTML = current;
+}
+
+function doMaths() {
+  if (domath === "divide") {
+    current = Number(lastNum) / Number(current);
+    afterMath();
+  } else if (domath === "multiple") {
+    current = Number(lastNum) * Number(current);
+    afterMath();
+  } else if (domath === "plus") {
+    current = Number(lastNum) + Number(current);
+    afterMath();
+  } else if (domath === "minus") {
+    current = Number(lastNum) - Number(current);
+    afterMath();
+  } else if (domath === "equal") {
+    afterMath();
+  }
+}
+
+function afterMath() {
+  if (current % 1 !== 0 && current.toString().length > 8) {
+    current = Number(current).toFixed(6);
+  }
+  lastNum = current.toString();
+  showCurrent(lastNum);
+  resetCurrent = true;
+  resetDomath = true;
+  domath = "";
+}
+
+// decide what to do when a button is clicked
+Array.prototype.forEach.call(numbersSelector, function (val) {
+  val.onclick = function (e) {
+    resetDomath = false;
+    if (this.innerHTML !== ".") {
+      addToPrev(this.innerHTML);
+      showCurrent(this.innerHTML);
+      lastNumber(this.innerHTML);
+    } else if (this.innerHTML === "." && decimal === false) {
+      addToPrev(this.innerHTML);
+      showCurrent(this.innerHTML);
+      lastNumber(this.innerHTML);
+      decimal = true;
+    }
+  };
+});
+
+opArr.forEach(function (element) {
+  element.onclick = function (e) {
+    if (resetDomath === false) {
+      resetDomath = true;
+      resetPrev = false;
+      decimal = false;
+      addToPrev(this.innerHTML);
+      lastNumberMode = false;
+      resetCurrent = true;
+      doMaths();
+    } else if (resetDomath === true) {
+      prev = prev.substr(0, prev.length - 1);
+      addToPrev(this.innerHTML);
+    }
+
+    if (element === divide) {
+      domath = "divide";
+    } else if (element === multiple) {
+      domath = "multiple";
+    } else if (element === plus) {
+      domath = "plus";
+    } else if (element === minus) {
+      domath = "minus";
+    } else if (element === equal) {
+      domath = "equal";
+      clearPrev();
+      prev = current;
+      lastNum = current;
+      resetDomath = false;
+      resetPrev = true;
+    }
+  };
+});
+
+ceEL.onclick = function (e) {
+  var rep = new RegExp(current + "$");
+  prev = prev.replace(rep, "");
+  prevEl.innerHTML = prev;
+  clearCurrent();
+};
+
+cEL.onclick = function (e) {
+  clearCurrent();
+  clearPrev();
+  lastNum = "";
+};

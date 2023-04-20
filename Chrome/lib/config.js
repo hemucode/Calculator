@@ -22,7 +22,7 @@ config['welcome'] = {
     'default': {
         'context': 'win',
         'size': {
-            "width": 290, 
+            "width": 400, 
             "height": 510
         }
     }
