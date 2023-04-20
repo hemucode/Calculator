@@ -1,9 +1,12 @@
 setInterval(()=>{
 	x = document.querySelector("#current")
-	if (x.innerText.length>10 ) {
+	if (x.innerText.length>10 && x.innerText.length<30) {
 		cal = (x.innerText.length - 10) * 2;
 		size = 50 - cal;
 		x.style.fontSize = size+"px";
+	}
+	if(x.innerText.length<10){
+      x.style.fontSize = "50px";
 	}
 },300)
 
