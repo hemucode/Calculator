@@ -1,14 +1,39 @@
-setInterval(()=>{
-	x = document.querySelector("#current")
-	if (x.innerText.length>10 && x.innerText.length<30) {
-		cal = (x.innerText.length - 10) * 2;
-		size = 50 - cal;
-		x.style.fontSize = size+"px";
-	}
-	if(x.innerText.length<10){
-      x.style.fontSize = "50px";
-	}
-},300)
+domReady(() => {
+  translateHTML()
+  fontrun()
+
+})
+
+function domReady (callback) {
+  if (document.readyState === 'complete') {
+    callback()
+  } else {
+    window.addEventListener('load', callback, false);
+  }
+}
+
+function translateHTML (dataKey = 'message') {
+  for (const $element of document.getElementsByTagName('*')) {
+    if ($element.dataset && $element.dataset[dataKey]) {
+      $element.innerHTML = chrome.i18n.getMessage($element.dataset[dataKey])
+    }
+  }
+}
+
+function fontrun(){
+  setInterval(()=>{
+    x = document.querySelector("#current")
+    if (x.innerText.length>10 && x.innerText.length<30) {
+      cal = (x.innerText.length - 10) * 2;
+      size = 50 - cal;
+      x.style.fontSize = size+"px";
+    }
+    if(x.innerText.length<10){
+        x.style.fontSize = "50px";
+    }
+  },300)
+}
+
 
 function middleSection() {
   var windowHeight = window.innerHeight;
